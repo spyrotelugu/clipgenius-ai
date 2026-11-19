@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClipGenius AI</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b1020;
+  color: white;
+}
+header {
+  padding: 22px;
+  border-bottom: 1px solid #27304a;
+  font-size: 23px;
+  font-weight: bold;
+}
+header span { color: #9b83ff; }
+main {
+  max-width: 760px;
+  margin: 65px auto;
+  padding: 20px;
+  text-align: center;
+}
+h1 { font-size: 38px; }
+h1 span { color: #a18aff; }
+p { color: #aeb8d0; line-height: 1.6; }
+.panel {
+  background: #151d33;
+  border: 1px solid #303b5b;
+  border-radius: 18px;
+  padding: 25px;
+  margin-top: 30px;
+}
+input {
+  width: 100%;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #475477;
+  background: #0b1020;
+  color: white;
+  font-size: 15px;
+}
+button {
+  width: 100%;
+  padding: 16px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #8065ed;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+button:active { opacity: .8; }
+#preview {
+  width: 100%;
+  margin-top: 20px;
+  aspect-ratio: 16/9;
+  border: 0;
+  border-radius: 12px;
+}
+.note {
+  font-size: 13px;
+  margin-top: 18px;
+}
+footer {
+  text-align: center;
+  color: #8792ad;
+  padding: 30px;
+}
+</style>
+</head>
+<body>
+
+<header>✂ Clip<span>Genius</span> AI</header>
+
+<main>
+  <h1>Turn long videos into
+    <span>short clips.</span>
+  </h1>
+  <p>
+    AI-powered video clipping, smart captions
+    and short-form content creation.
+  </p>
+
+  <section class="panel">
+    <h2>Start creating</h2>
+    <p>Paste a YouTube video link to preview it.</p>
+
+    <input id="videoUrl"
+      placeholder="Paste YouTube video URL">
+
+    <button onclick="previewVideo()">
+      Preview video
+    </button>
+
+    <div id="result"></div>
+
+    <p class="note">
+      AI processing is coming in the next development
+      stage. Only process videos you own or have
+      permission to edit.
+    </p>
+  </section>
+</main>
+
+<footer>ClipGenius AI · Create something amazing</footer>
+
+<script>
+function previewVideo() {
+  const url = document.getElementById("videoUrl").value.trim();
+  const result = document.getElementById("result");
+
+  let id = "";
+
+  try {
+    const u = new URL(url);
+
+    if (u.hostname === "youtu.be") {
+      id = u.pathname.slice(1).split("/")[0];
+    } else if (
+      u.hostname.endsWith("youtube.com") ||
+      u.hostname.endsWith("youtube-nocookie.com")
+    ) {
+      id = u.searchParams.get("v") || "";
+      if (!id) {
+        const parts = u.pathname.split("/");
+        if (["shorts", "embed"].includes(parts[1])) {
+          id = parts[2] || "";
+        }
+      }
+    }
+  } catch (e) {}
+
+  if (!/^[a-zA-Z0-9_-]{11}$/.test(id)) {
+    result.textContent = "Please enter a valid YouTube link.";
+    return;
+  }
+
+  result.innerHTML = "";
+
+  const frame = document.createElement("iframe");
+  frame.id = "preview";
+  frame.src = "https://www.youtube-nocookie.com/embed/" + id;
+  frame.title = "YouTube video preview";
+  frame.allowFullscreen = true;
+
+  result.appendChild(frame);
+}
+</script>
+
+</body>
+</html>
